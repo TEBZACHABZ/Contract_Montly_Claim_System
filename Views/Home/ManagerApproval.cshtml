@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Manager Approval";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Academic Manager Approval</h2>
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Claim ID</th>
+                <th>Lecturer</th>
+                <th>Amount</th>
+                <th>Coordinator Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>CLM004</td>
+                <td>Mary Johnson</td>
+                <td>R 2900.00</td>
+                <td><span class="badge bg-success">Approved</span></td>
+                <td>
+                    <button class="btn btn-success btn-sm">Final Approve</button>
+                    <button class="btn btn-danger btn-sm">Reject</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+

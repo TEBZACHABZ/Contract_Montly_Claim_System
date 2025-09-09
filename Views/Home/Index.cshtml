@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<style>
+    body {
+        /* Use the full path to your local image */
+        background-image: url('file:///C:/Users/RC_Student_lab/source/repos/Sup.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center;
+        font-family: Arial, sans-serif;
+        color: white;
+    }
+
+    .overlay {
+        background: rgba(0, 0, 0, 0.6); /* dark overlay for readability */
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 40px;
+    }
+
+    h1, p {
+        text-shadow: 2px 2px 4px #000;
+    }
+
+    .btn {
+        font-size: 1.1rem;
+        padding: 10px 20px;
+        border-radius: 8px;
+    }
+</style>
+
+<div class="overlay">
+    <div class="text-center">
+        <h1 class="display-4">Welcome to Contract Monthly Claim System (CMCS)</h1>
+        <p>Streamline your Independent Contractor claims with ease.</p>
+
+        <!-- Navigation buttons -->
+        <a class="btn btn-primary m-2" href="@Url.Action("Register", "Home")">Register Now</a>
+        <a class="btn btn-success m-2" href="@Url.Action("SubmitClaim", "Home")">Submit Claim</a>
+        <a class="btn btn-info m-2" href="@Url.Action("TrackClaims", "Home")">Track Claims</a>
+        <a class="btn btn-warning m-2" href="@Url.Action("CoordinatorDashboard", "Home")">Coordinator Approval</a>
+        <a class="btn btn-danger m-2" href="@Url.Action("ManagerApproval", "Home")">Manager Approval</a>
+        <a class="btn btn-secondary m-2" href="@Url.Action("LecturerDashboard", "Home")">Lecturer Dashboard</a>
+        <a class="btn btn-primary m-2" href="@Url.Action("CoordinatorDashboard", "Home")">Coordinator Dashboard</a>
+        <a class="btn btn-dark m-2" href="@Url.Action("ManagerDashboard", "Home")">Manager Dashboard</a>
+    </div>
+</div>
