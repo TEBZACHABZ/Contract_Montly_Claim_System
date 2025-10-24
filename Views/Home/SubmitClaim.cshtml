@@ -1,23 +1,33 @@
-﻿@{
-    ViewData["Title"] = "Submit Claim";
-}
+﻿@model Contract_Monthly_Claim_System.Models.Claim;
+
 
 <div class="container mt-5">
     <h2 class="mb-4">Submit Claim</h2>
 
-    <form>
+    <!-- Form uses ASP.NET Core tag helpers -->
+    <form asp-controller="Home" asp-action="SubmitClaim" id="claimForm" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="lecturerId" value="1" />
+
         <div class="form-group mb-3">
-            <label>Hours Worked</label>
-            <input type="number" class="form-control" placeholder="Enter total hours" />
+            <label asp-for="HoursWorked">Hours Worked</label>
+            <input asp-for="HoursWorked" id="hoursWorked" name="hoursWorked" type="number" class="form-control" placeholder="Enter total hours" required />
         </div>
+
         <div class="form-group mb-3">
-            <label>Hourly Rate (R)</label>
-            <input type="number" class="form-control" placeholder="Enter hourly rate" />
+            <label asp-for="HourlyRate">Hourly Rate (R)</label>
+            <input asp-for="HourlyRate" id="hourlyRate" name="hourlyRate" type="number" class="form-control" placeholder="Enter hourly rate" required />
         </div>
+
         <div class="form-group mb-3">
-            <label>Supporting Document</label>
-            <input type="file" class="form-control" />
+            <label for="file">Supporting Document</label>
+            <input id="file" name="file" type="file" class="form-control" accept=".pdf,.docx,.xlsx" />
         </div>
+
         <button type="submit" class="btn btn-success">Submit Claim</button>
     </form>
+
+    <div id="claimResult" class="mt-3 text-success fw-bold"></div>
 </div>
+
+
+

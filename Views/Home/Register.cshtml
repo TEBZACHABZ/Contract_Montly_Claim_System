@@ -1,24 +1,18 @@
-﻿@{
-    ViewData["Title"] = "Lecturer Registration";
-}
+﻿@model Contract_Monthly_Claim_System.Models.Lecturer
 
-<div class="container mt-5">
-    <h2 class="mb-4">Lecturer Registration</h2>
-
-    <form>
-        <div class="form-group mb-3">
-            <label>Full Name</label>
-            <input type="text" class="form-control" placeholder="Enter full name" />
-        </div>
-        <div class="form-group mb-3">
-            <label>Email Address</label>
-            <input type="email" class="form-control" placeholder="Enter email" />
-        </div>
-        <div class="form-group mb-3">
-            <label>Password</label>
-            <input type="password" class="form-control" placeholder="Enter password" />
-        </div>
-        <button type="submit" class="btn btn-primary">Register</button>
-    </form>
-</div>
-
+<form asp-action="Register" asp-controller="Home" method="post">
+    <div class="form-group">
+        <label asp-for="FullName"></label>
+        <input asp-for="FullName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Register</button>
+</form>
+ 

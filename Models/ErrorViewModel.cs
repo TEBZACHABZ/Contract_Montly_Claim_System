@@ -1,4 +1,4 @@
-namespace Contract_Montly_Claim_System.Models
+namespace Contract_Monthly_Claim_System.Models
 {
     public class ErrorViewModel
     {

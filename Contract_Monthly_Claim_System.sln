@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contract_Montly_Claim_System", "Contract_Montly_Claim_System.csproj", "{9031F06D-2D6E-4395-8B2E-979E9C51A93E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contract_Monthly_Claim_System.Tests", "..\Contract_Monthly_Claim_System.Tests\Contract_Monthly_Claim_System.Tests.csproj", "{5EC9E6B6-C722-42CE-BB57-9F2105171A8C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{9031F06D-2D6E-4395-8B2E-979E9C51A93E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9031F06D-2D6E-4395-8B2E-979E9C51A93E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9031F06D-2D6E-4395-8B2E-979E9C51A93E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EC9E6B6-C722-42CE-BB57-9F2105171A8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EC9E6B6-C722-42CE-BB57-9F2105171A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EC9E6B6-C722-42CE-BB57-9F2105171A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EC9E6B6-C722-42CE-BB57-9F2105171A8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F2738FB2-EA37-4CD5-9F08-E3D728BFF6BD}
 	EndGlobalSection
 EndGlobal
