@@ -1,11 +1,12 @@
-﻿@{
+﻿@model List<Contract_Monthly_Claim_System.Models.Claim>
+@{
     ViewData["Title"] = "Academic Manager";
 }
 
 <div class="container mt-4">
     <h2 class="text-primary">Academic Manager - Approvals</h2>
 
-    <table class="table table-hover">
+    <table class="table table-hover mt-3">
         <thead>
             <tr>
                 <th>Claim ID</th>
@@ -13,22 +14,37 @@
                 <th>Hours</th>
                 <th>Amount</th>
                 <th>Verification Status</th>
-                <th>Final Approval</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>C001</td>
-                <td>John Smith</td>
-                <td>40</td>
-                <td>R 5,500</td>
-                <td>Verified</td>
-                <td>
-                    <button class="btn btn-primary">Approve</button>
-                    <button class="btn btn-warning">Reject</button>
-                </td>
-            </tr>
+            @if (Model == null || !Model.Any())
+            {
+                <tr><td colspan="6" class="text-center">No claims awaiting manager action.</td></tr>
+            }
+            else
+            {
+                foreach (var claim in Model)
+                {
+                    <tr>
+                        <td>@claim.ClaimId</td>
+                        <td>@claim.Lecturer?.FullName</td>
+                        <td>@claim.HoursWorked</td>
+                        <td>R @claim.TotalAmount.ToString("F2")</td>
+                        <td>@claim.Status.ToString()</td>
+                        <td>
+                            <form asp-action="FinalApproveClaim" asp-controller="Home" method="post" style="display:inline-block;">
+                                <input type="hidden" name="id" value="@claim.ClaimId" />
+                                <button type="submit" class="btn btn-primary btn-sm">Final Approve</button>
+                            </form>
+                            <form asp-action="RejectClaim" asp-controller="Home" method="post" style="display:inline-block; margin-left:6px;">
+                                <input type="hidden" name="id" value="@claim.ClaimId" />
+                                <button type="submit" class="btn btn-warning btn-sm">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
         </tbody>
     </table>
 </div>
-

@@ -10,18 +10,16 @@ namespace Contract_Monthly_Claim_System.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _env;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IWebHostEnvironment env)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
             _context = context;
-            _env = env;
         }
 
         public IActionResult Index() => View();
 
-        // --- Registration ---
+        // ------------------ REGISTER ------------------
         [HttpGet]
         public IActionResult Register() => View();
 
@@ -38,7 +36,7 @@ namespace Contract_Monthly_Claim_System.Controllers
             return View(lecturer);
         }
 
-        // --- Lecturer Dashboard ---
+        // ------------------ LECTURER DASHBOARD ------------------
         [HttpGet]
         public async Task<IActionResult> LecturerDashboard()
         {
@@ -46,43 +44,23 @@ namespace Contract_Monthly_Claim_System.Controllers
                 .Include(c => c.Lecturer)
                 .OrderByDescending(c => c.SubmittedAt)
                 .ToListAsync();
+
             return View(lecturerClaims);
         }
 
-        // --- Claim submission ---
+        // ------------------ SUBMIT CLAIM ------------------
         [HttpGet]
         public IActionResult SubmitClaim() => View();
 
         [HttpPost]
-        public async Task<IActionResult> SubmitClaim(Claim claim, IFormFile? SupportingDocument)
+        public async Task<IActionResult> SubmitClaim(Claim claim)
         {
             if (ModelState.IsValid)
             {
                 claim.TotalAmount = claim.HoursWorked * claim.HourlyRate;
+
                 _context.Claims.Add(claim);
                 await _context.SaveChangesAsync();
-
-                // Handle file upload
-                if (SupportingDocument != null)
-                {
-                    string uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
-                    Directory.CreateDirectory(uploadsFolder);
-
-                    string filePath = Path.Combine(uploadsFolder, SupportingDocument.FileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await SupportingDocument.CopyToAsync(stream);
-                    }
-
-                    var document = new ClaimDocument
-                    {
-                        ClaimId = claim.ClaimId,
-                        FileName = SupportingDocument.FileName,
-                        FilePath = "/uploads/" + SupportingDocument.FileName
-                    };
-                    _context.ClaimDocuments.Add(document);
-                    await _context.SaveChangesAsync();
-                }
 
                 TempData["Message"] = "Claim submitted successfully!";
                 return RedirectToAction("TrackClaims");
@@ -91,19 +69,25 @@ namespace Contract_Monthly_Claim_System.Controllers
             return View(claim);
         }
 
-        // --- Track claims ---
+        // ------------------ TRACK CLAIMS ------------------
         public async Task<IActionResult> TrackClaims()
         {
-            var claims = await _context.Claims.Include(c => c.Lecturer).ToListAsync();
+            var claims = await _context.Claims
+                .Include(c => c.Lecturer)
+                .Include(c => c.Documents)
+                .ToListAsync();
+
             return View(claims);
         }
 
-        // --- Coordinator actions ---
+        // ------------------ COORDINATOR DASHBOARD ------------------
         public async Task<IActionResult> CoordinatorDashboard()
         {
             var claims = await _context.Claims
                 .Where(c => c.Status == ClaimStatus.Pending)
+                .Include(c => c.Lecturer)
                 .ToListAsync();
+
             return View(claims);
         }
 
@@ -131,16 +115,17 @@ namespace Contract_Monthly_Claim_System.Controllers
             return RedirectToAction("CoordinatorDashboard");
         }
 
-        // --- Manager Dashboard ---
+        // ------------------ MANAGER DASHBOARD ------------------
         public async Task<IActionResult> ManagerDashboard()
         {
             var verifiedClaims = await _context.Claims
                 .Where(c => c.Status == ClaimStatus.Verified)
+                .Include(c => c.Lecturer)
                 .ToListAsync();
+
             return View(verifiedClaims);
         }
 
-        // --- Manager Approval Page ---
         [HttpGet]
         public async Task<IActionResult> ManagerApproval()
         {
@@ -148,6 +133,7 @@ namespace Contract_Monthly_Claim_System.Controllers
                 .Where(c => c.Status == ClaimStatus.Verified || c.Status == ClaimStatus.Approved)
                 .Include(c => c.Lecturer)
                 .ToListAsync();
+
             return View(claims);
         }
 
@@ -160,29 +146,35 @@ namespace Contract_Monthly_Claim_System.Controllers
                 claim.Status = ClaimStatus.Approved;
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction("ManagerApproval");
         }
 
-        // --- JSON API for JS Refresh ---
+        // ------------------ HR DASHBOARD ------------------
         [HttpGet]
-        public IActionResult GetClaimsStatus()
+        public IActionResult HrDashboard() => View();
+
+        [HttpGet]
+        public IActionResult GenerateHrReport()
         {
-            var claims = _context.Claims
+            var approvedClaims = _context.Claims
                 .Include(c => c.Lecturer)
+                .Where(c => c.Status == ClaimStatus.Approved)
                 .Select(c => new
                 {
-                    c.ClaimId,
-                    LecturerName = c.Lecturer != null ? c.Lecturer.FullName : string.Empty,
+                    claimId = c.ClaimId,
+                    lecturer = c.Lecturer.FullName,
                     c.HoursWorked,
                     c.HourlyRate,
-                    c.Status,
+                    c.TotalAmount,
                     c.SubmittedAt
                 })
                 .ToList();
 
-            return Json(claims);
+            return Json(approvedClaims);
         }
 
+        // ------------------ SYSTEM ------------------
         public IActionResult Privacy() => View();
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -190,3 +182,4 @@ namespace Contract_Monthly_Claim_System.Controllers
             View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
+

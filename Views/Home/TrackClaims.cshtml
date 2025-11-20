@@ -15,14 +15,14 @@
                 <th>Docs</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="claimsBody">
             @foreach (var c in Model)
             {
                 <tr>
                     <td>@c.ClaimId</td>
                     <td>@c.Lecturer?.FullName</td>
                     <td>@c.SubmittedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
-                    <td>R @c.TotalAmount</td>
+                    <td>R @c.TotalAmount.ToString("F2")</td>
                     <td>@c.Status.ToString()</td>
                     <td>
                         @if (c.Documents != null && c.Documents.Count > 0)
@@ -38,3 +38,39 @@
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+    <script>
+        // Auto-refresh using API
+        async function refreshClaims() {
+            try {
+                const res = await fetch('@Url.Action("GetClaimsStatus","Home")');
+                if (!res.ok) return;
+                const data = await res.json();
+                const tbody = document.getElementById("claimsBody");
+                tbody.innerHTML = "";
+                data.forEach(c => {
+                    const submitted = new Date(c.SubmittedAt).toLocaleDateString();
+                    const row = `
+                        <tr>
+                            <td>${c.ClaimId}</td>
+                            <td>${c.LecturerName}</td>
+                            <td>${submitted}</td>
+                            <td>R ${(c.HoursWorked * c.HourlyRate).toFixed(2)}</td>
+                            <td>${c.Status}</td>
+                            <td>${(c.Documents && c.Documents.length>0) ? c.Documents.map(d => `<div><a target="_blank" href="${d.FilePath}">${d.FileName}</a></div>`).join('') : ''}</td>
+                        </tr>`;
+                    tbody.insertAdjacentHTML("beforeend", row);
+                });
+            } catch (err) {
+                console.error("Failed to refresh claims:", err);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            refreshClaims();
+            setInterval(refreshClaims, 5000); // 5 seconds
+        });
+    </script>
+}
+

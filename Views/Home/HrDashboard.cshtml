@@ -1,0 +1,77 @@
+﻿@{
+    ViewData["Title"] = "HR Dashboard";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary">HR Dashboard – Approved Claims Report</h2>
+    <p class="text-muted">Automatically generated report of all approved claims.</p>
+
+    <!-- Export buttons -->
+    <div class="mb-3">
+        <button id="exportExcel" class="btn btn-success btn-sm">Export to Excel</button>
+        <button id="exportPdf" class="btn btn-danger btn-sm">Export to PDF</button>
+    </div>
+
+    <!-- Report Table -->
+    <table class="table table-bordered table-hover mt-3" id="hrTable">
+        <thead class="table-info">
+            <tr>
+                <th>Claim ID</th>
+                <th>Lecturer</th>
+                <th>Hours</th>
+                <th>Rate (R)</th>
+                <th>Total (R)</th>
+                <th>Submitted</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h4 class="text-primary mt-4">Total Payout:</h4>
+    <div class="alert alert-info fs-5 fw-bold" id="totalCost">Loading...</div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        const tableBody = document.querySelector("#hrTable tbody");
+        const totalCostDiv = document.getElementById("totalCost");
+
+        const res = await fetch("/Home/GenerateHrReport");
+        const data = await res.json();
+
+        let totalCost = 0;
+
+        data.forEach(c => {
+            const row = `
+                <tr>
+                    <td>${c.claimId}</td>
+                    <td>${c.lecturer}</td>
+                    <td>${c.hoursWorked}</td>
+                    <td>${c.hourlyRate}</td>
+                    <td>${c.totalAmount}</td>
+                    <td>${new Date(c.submittedAt).toLocaleDateString()}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+
+            totalCost += c.totalAmount;
+        });
+
+        totalCostDiv.textContent = "R " + totalCost.toFixed(2);
+    });
+
+    // Excel Export
+    document.getElementById("exportExcel").addEventListener("click", () => {
+        const table = document.getElementById("hrTable").outerHTML;
+        const blob = new Blob([table], { type: "application/vnd.ms-excel" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "HR_Approved_Claims_Report.xls";
+        a.click();
+    });
+
+    // PDF Export (simple browser print)
+    document.getElementById("exportPdf").addEventListener("click", () => {
+        window.print();
+    });
+</script>
